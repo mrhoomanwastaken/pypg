@@ -42,13 +42,14 @@ equipped = {
 }
 active_quests = []
 completed_quests = [0]
+unrewarded_quests = []
 
 #room navagator
 def room(num):
-  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug
+  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug,unrewarded_quests
   clear()
   if debug:
-    print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug})")
+    print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug}),unrewarded_quests({unrewarded_quests})")
   write(data.rooms[num]["info"])
 
   #print the options
@@ -70,7 +71,7 @@ def room(num):
     if data.rooms[num]["options"][choice]["type"] == "shop":
       shop(data.rooms[num]["options"][choice]["number"])
     if data.rooms[num]["options"][choice]["type"] == "person":
-      person(data.rooms[num]["options"][choice]["number"],0)
+      person(data.rooms[num]["options"][choice]["number"])
   else:
     try:
       if data.rooms[num]["options"][choice]["type"] == "room":
@@ -88,7 +89,7 @@ def room(num):
 
 #combat handler
 def fight(num):
-  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug
+  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug,unrewarded_quests
   if random.randint(0,100) > data.fights[num]["spawn_chance %"]:
     room(data.fights[num]["place"])
   if num in fights_won and data.fights[num]["repeat"] == 0:
@@ -121,7 +122,7 @@ def fight(num):
     clear()
     print(data.enemys[enemy]["image"])
     if debug:
-      print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug})")
+      print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug}),unrewarded_quests({unrewarded_quests})")
     print(f"the {enemy} stares at you")
     print(f"health {self_health}/{stats['health']}")
     print(f"enemy health {enemy_health}/{enemy_health_start}")
@@ -201,11 +202,11 @@ def fight(num):
     sleep(1)
     
 def shop(num):
-  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug
+  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug,unrewarded_quests
   while True:
     clear()
     if debug:
-      print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug})")
+      print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug}),unrewarded_quests({unrewarded_quests})")
     print(data.shops[num]["info"])
     print(f"you have {coins} coins")
     a = 1
@@ -226,54 +227,27 @@ def shop(num):
         print(f"you got {data.shops[num]['items']['items'][int(choice)-1]}")
         input("press enter to continue")
 
-def person(num,reward) :
-  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug
-  clear()
+def person(num) :
+  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug,unrewarded_quests
+  #quest handler
+  for quest in active_quests not in completed_quests:
+    quest_type = data.quests[quest]["type"]
+    if quest_type == "kill":
+      #check if thing has been killed
+      if data.quests[quest]["number"] in fights_won:
+        unrewarded_quests.append(quest)
+  #people handler
   max = 0
-  
-  if debug:
-   print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug})")
-      
-  for i in range(0,len(data.people[num]["text"]["quests"])):
-    if data.people[num]["text"]["quests"][i] in completed_quests:
-      if max < data.people[num]["text"]["quests"][i]:
-        max = data.people[num]["text"]["quests"][i]
+  #figure out which quest is the higest available quest (idk how to explain it)
+  for quest in data.people[num]["quests"]:
+    if data.people[num]["quests"][quest]["trigger_quest"] in completed_quests:
+      if quest > max:
+        max = quest
+
+  #figure out which test for the max quest to display
+  if data.people[num]["quests"][max] not in active_quests or completed_quests or unrewarded_quests:
+    write(data.people[num]["quests"][max]["give_text"])
     
-    if data.people[num]["text"][max]["type"] == "reward":
-      if reward == 1:
-        print(data.people[num]["text"][max][1]["text"])
-        print("you got")
-        print(f"{data.people[num]['text'][max][1]['coins']} coins")
-        coins += data.fights[num]['rewards']['coins']
-        for item in data.people[num]["text"][max][1]["rewards"]:
-          items.append(item)
-          print(item)
-        input("press enter to continue")
-        room(data.people[num]["area"],)
-        
-  if data.people[num]["text"][max]["type"] == "quest":
-    
-    if data.quests[data.people[num]["text"][max]["quest"]]["type"] == "kill":
-      
-      if data.quests[data.people[num]["text"][max]["quest"]]["number"] in fights_won: 
-        completed_quests.append(data.people[num]["text"][max]["quest"])
-        active_quests.remove(data.people[num]["text"][max]["quest"])
-        person(num,1)
-    
-    if data.people[num]["text"][max]["quest"] not in active_quests:
-      print(data.people[num]["text"][max][1])
-      if input("accept y/n") == "y":
-        active_quests.append(data.people[num]["text"][max]["quest"])
-        room(data.people[num]["area"],)
-      else:
-        
-        room(data.people[num]["area"],)
-    else:
-      
-      print(data.people[num]["text"][max][2])
-      input("press enter")
-      room(data.people[num]["area"],)
-        
         
 
 def menu():
