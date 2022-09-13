@@ -280,6 +280,12 @@ def person(num) :
     input("press enter to continue")
     room(data.people[num]["location"])
 
+  #if quest is done and has been rewarded
+  if max in completed_quests:
+    write(data.people[num]["quests"][max]["completed_text"])
+    input("press enter to continue")
+    room(data.people[num]["location"])
+
 def menu():
   global debug
   print("""
