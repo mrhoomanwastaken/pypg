@@ -128,39 +128,29 @@ items = {
     "type" : "hand",
     "amount" : 10,
     "consume/equip" : "equip",
-    "message" : f"equip place holder"
+    "message" : "equip place holder"
   }
 }
 
 people = {
   1 : {
     "name" : "billy bob joe",
-    "area" : 2,
-    "text" : {
-      "quests" : [0,1],
-      0 : {
-        "type" : "quest",
-        "quest" : 1,
-        1 : "hello go kill the monster in the forest please",
-        2 : "shoo now go kill the monster"
-      },
+    "location" : 2,
+    "quests" : {
       1 : {
-        "type" : "reward",
-        "quest" : 1,
-        1 : {
-          "text" : "thank you for killing the monster take this",
-          "coins" : 100,
-          "rewards" : [],
+        "trigger_quest" : 0,
+        "give_text" : "hi can you go kill the monster in the forest for me?",
+        "active_text" : "shoo now go kill the monster",
+        "reward" : {
+          "text" : "thank you for killing the monster here is your reward",
+          "coins" : 10,
+          "items" : ["small health potion","small health potion"]
         },
-        2 : {
-          "type" : "text",
-          "text" : "thank you agen"
-        }
+        "completed_text" : "thank you for killing the monster"
       }
     }
   }
 }
-
 quests = {
   1 : {
     "type" : "kill",
