@@ -144,7 +144,7 @@ people = {
         "reward" : {
           "text" : "thank you for killing the monster here is your reward",
           "coins" : 10,
-          "items" : []
+          "items" : ["small health potion","small health potion"]
         },
         "completed_text" : "thank you for killing the monster"
       }

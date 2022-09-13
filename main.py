@@ -229,13 +229,17 @@ def shop(num):
 
 def person(num) :
   global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug,unrewarded_quests
+  clear()
+  if debug:
+    print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug}),unrewarded_quests({unrewarded_quests})")
   #quest handler
-  for quest in active_quests not in completed_quests:
+  for quest in [q for q in active_quests if q not in completed_quests]:
     quest_type = data.quests[quest]["type"]
     if quest_type == "kill":
       #check if thing has been killed
       if data.quests[quest]["number"] in fights_won:
         unrewarded_quests.append(quest)
+      
   #people handler
   max = 0
   #figure out which quest is the higest available quest (idk how to explain it)
@@ -244,11 +248,37 @@ def person(num) :
       if quest > max:
         max = quest
 
-  #figure out which test for the max quest to display
-  if data.people[num]["quests"][max] not in active_quests or completed_quests or unrewarded_quests:
+  #figure out which text to display useing max
+  #if never seen quest before
+  if max not in active_quests and max not in completed_quests and max not in unrewarded_quests:
     write(data.people[num]["quests"][max]["give_text"])
-    
-        
+    choice = input("accept y/n \n")
+    if choice == "y":
+      active_quests.append(max)
+      room(data.people[num]["location"])
+    else:
+      room(data.people[num]["location"])
+
+  #if in process of compleating quest
+  if max in active_quests and max not in unrewarded_quests:
+    write(data.people[num]["quests"][max]["active_text"])
+    input("press enter to continue")
+    room(data.people[num]["location"])
+
+  #if quest is done but has not been rewarded (reward handler)
+  if max in unrewarded_quests:
+    unrewarded_quests.remove(max)
+    active_quests.remove(max)
+    completed_quests.append(max)
+    coins += data.people[num]["quests"][max]["reward"]["coins"]
+    write(data.people[num]["quests"][max]["reward"]["text"])
+    write("you got")
+    write(f'{data.people[num]["quests"][max]["reward"]["coins"]} coins')
+    for item in data.people[num]["quests"][max]["reward"]["items"]:
+      write(item)
+      items.append(item)
+    input("press enter to continue")
+    room(data.people[num]["location"])
 
 def menu():
   global debug
