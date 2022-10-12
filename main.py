@@ -81,7 +81,7 @@ def room(num):
       if data.rooms[num]["options"][choice]["type"] == "shop":
         shop(data.rooms[num]["options"][choice]["number"])
       if data.rooms[num]["options"][choice]["type"] == "person":
-        person(data.rooms[num]["options"][choice]["number"],0)
+        person(data.rooms[num]["options"][choice]["number"])
     except:
       print("invalid input.")
       sleep(0.5)
@@ -96,6 +96,7 @@ def fight(num):
     room(data.fights[num]["place"])
   
   self_health = stats["health"]
+  mana = stats['max_mana']
   enemy_health_start = (data.enemys[data.fights[num]["enemy"]]["health"] * (data.fights[num]["level"]))
   level = data.fights[num]["level"]
   
@@ -160,6 +161,7 @@ def fight(num):
       sleep(1)
       clear()
 
+    
     if choice == 2:
       clear()
       for item in range(0 , len(items)):
@@ -192,6 +194,25 @@ def fight(num):
               equipped["equipped"].append(item)
         clear()
       continue
+
+    if choice == 3:
+      clear()
+      i = 0
+      for ability in abilities:
+        i += 1
+        print(f'press {i} to {data.abilities[ability]["message"]}')
+        
+      choice = int(input('what do you want to do? \n'))
+      if mana > data.abilities[abilities[choice-1]]['cost']:
+        mana -= data.abilities[abilities[choice-1]]['cost']
+        if data.abilities[abilities[choice-1]]['type'] == 'damage' :
+          enemy_health -= data.abilities[abilities[choice-1]]['amount']
+          print(f'you delt {data.abilities[abilities[choice-1]]["amount"]} damage')
+      else:
+        print("you cant do that")
+        sleep(1)
+        continue
+          
     damage = random.randint((data.enemys[enemy]["dex"] * 10) , (((data.enemys[enemy]["dex"] * level) * 10) + 100))
     print(f"the {data.fights[num]['enemy']} attacked and did {data.enemys[enemy]['str'] * level * damage/100}")
     self_health -= (data.enemys[enemy]['str'] * level) * damage/100

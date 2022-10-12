@@ -12,9 +12,10 @@ start_stats = {
     "health" : 100,
     "str" : 1,
     "def" : 1,
-    "dex" : 1
+    "dex" : 1,
+    'max_mana' : 10
   },
-  'abilities' : [],
+  'abilities' : ['bite'],
   'fights_won' : []
 }
 
@@ -129,6 +130,15 @@ items = {
     "amount" : 10,
     "consume/equip" : "equip",
     "message" : "equip place holder"
+  }
+}
+
+abilities = {
+  'bite' : {
+    'type' : 'damage',
+    'amount' : 2,
+    'message' : 'bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! bite them! (deals 2 damage)',
+    'cost' : 2
   }
 }
 
