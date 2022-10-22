@@ -248,11 +248,8 @@ def shop(num):
         print(f"you got {data.shops[num]['items']['items'][int(choice)-1]}")
         input("press enter to continue")
 
-def person(num) :
+def quest_handler():
   global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug,unrewarded_quests
-  clear()
-  if debug:
-    print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug}),unrewarded_quests({unrewarded_quests})")
   #quest handler
   for quest in [q for q in active_quests if q not in completed_quests]:
     quest_type = data.quests[quest]["type"]
@@ -261,6 +258,13 @@ def person(num) :
       if data.quests[quest]["number"] in fights_won:
         unrewarded_quests.append(quest)
       
+def person(num) :
+  global items,coins,stats,abilities,equipped,active_quests,completed_quests,fights_won,debug,unrewarded_quests
+  clear()
+  if debug:
+    print(f"items({items}),coins({coins}),stats({stats}),abilities({abilities}),equipped({equipped}),active_quests({active_quests}),completed_quests({completed_quests}),fights_won({fights_won}),debug({debug}),unrewarded_quests({unrewarded_quests})")
+
+  quest_handler()
   #people handler
   max = 0
   #figure out which quest is the higest available quest (idk how to explain it)
